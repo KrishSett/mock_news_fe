@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  vue-dev:
+    container_name: vue3-tailwind-dev
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - "4000:4000"  # Change port to 4000
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - VUE_APP_API_URL=http://localhost:3000  # Update variable for Vue CLI
+    command: npm run serve -- --port 4000 --host 0.0.0.0  # Use Vue CLI command for development
+
+  vue-prod:
+    container_name: vue3-tailwind-prod
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    ports:
+      - "8080:80"
+    depends_on:
+      - vue-dev

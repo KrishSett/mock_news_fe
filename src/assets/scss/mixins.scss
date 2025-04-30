@@ -1,0 +1,19 @@
+// _mixins.scss
+@mixin card-styles {
+    border-radius: $border-radius;
+    box-shadow: $box-shadow;
+    transition: all 0.3s ease;
+
+    &:hover {
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        transform: translateY(-2px);
+    }
+}
+
+@mixin tag-styles {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
