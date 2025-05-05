@@ -15,23 +15,22 @@
 </template>
 
 <script>
-import {reactive} from 'vue';
+import { reactive } from "vue";
 
 export default {
   setup() {
     const navItems = reactive([
-      { text: 'Home', to: '/' },
-      { text: 'Nation', to: '/nation' },
-      { text: 'Technology', to: '/technology' },
-      { text: 'System', to: '/system' },
-      { text: 'Entertainment', to: '/entertainment' },
-      { text: 'Sports', to: '/sports' }
+      { text: "Home", to: "/" },
+      { text: "Nation", to: "/nation" },
+      { text: "Technology", to: "/technology" },
+      { text: "System", to: "/system" },
+      { text: "Entertainment", to: "/entertainment" },
+      { text: "Sports", to: "/sports" },
     ]);
 
     return {
-      navItems
-    }
-  }
-}
-
+      navItems,
+    };
+  },
+};
 </script>
