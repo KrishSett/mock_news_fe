@@ -15,18 +15,23 @@
 </template>
 
 <script>
+import {reactive} from 'vue';
+
 export default {
-  name: 'AppNavbar',
-  data() {
+  setup() {
+    const navItems = reactive([
+      { text: 'Home', to: '/' },
+      { text: 'Nation', to: '/nation' },
+      { text: 'Technology', to: '/technology' },
+      { text: 'System', to: '/system' },
+      { text: 'Entertainment', to: '/entertainment' },
+      { text: 'Sports', to: '/sports' }
+    ]);
+
     return {
-      navItems: [
-        { text: 'Home', to: '/' },
-        { text: 'Nation', to: '/nation' },
-        { text: 'Technology', to: '/technology' },
-        { text: 'System', to: '/system' },
-        { text: 'Entertainment', to: '/entertainment' }
-      ]
+      navItems
     }
   }
 }
+
 </script>

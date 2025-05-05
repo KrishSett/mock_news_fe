@@ -10,11 +10,16 @@
 </template>
 
 <script>
+import { computed } from 'vue';
+
 export default {
-  name: 'AppFooter',
-  computed: {
-    currentYear() {
-      return new Date().getFullYear()
+  setup() {
+    const currentYear = computed(() => {
+      return new Date().getFullYear();
+    });
+
+    return {
+      currentYear
     }
   }
 }

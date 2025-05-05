@@ -1,9 +1,11 @@
 import axios from 'axios';
 
 class ApiService {
-    constructor(baseURL, defaultHeaders = {}) {
+    baseURL =  process.env.VUE_APP_API_URL;
+
+    constructor(defaultHeaders = {}) {
         this.api = axios.create({
-            baseURL: baseURL,
+            baseURL: this.baseURL,
             timeout: 10000,
             headers: {
                 'Content-Type': 'application/json',
