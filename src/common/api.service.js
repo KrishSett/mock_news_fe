@@ -40,7 +40,7 @@ class ApiService {
       const response = await this.api.post(endpoint, data, { headers });
       return response.data;
     } catch (error) {
-      console.error(`POST ${endpoint} failed:`, error);
+      console.error(`POST ${endpoint} failed:`, error?.message);
       throw error;
     }
   }

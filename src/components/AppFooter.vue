@@ -2,7 +2,9 @@
 <template>
   <footer class="footer">
     <p class="footer__copyright">
-      © {{ currentYear }} News Portal - Learning Project
+      <span class="footer__subtitle">
+        &copy; {{ currentYear }} - {{ footerTitle }}
+      </span>
     </p>
     <ul class="footer__links list-horizontal">
       <li><a href="#" class="footer__link">About</a></li>
@@ -11,18 +13,11 @@
   </footer>
 </template>
 
-<script>
+<script setup>
 import { computed } from "vue";
 
-export default {
-  setup() {
-    const currentYear = computed(() => {
-      return new Date().getFullYear();
-    });
-
-    return {
-      currentYear,
-    };
-  },
-};
+const footerTitle = `${process.env.VUE_APP_TITLE} ${process.env.VUE_APP_SUBTITLE}`;
+const currentYear = computed(() => {
+  return new Date().getFullYear();
+});
 </script>

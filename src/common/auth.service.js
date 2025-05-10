@@ -74,10 +74,10 @@ class AuthService extends ApiService {
 
       return true;
     } catch (error) {
-      console.error("Authentication failed:", error);
+      console.error("Authentication failed:", error?.message);
       window.localStorage.removeItem(STORAGE_KEY);
       window.localStorage.removeItem(TIME_KEY);
-      return false;
+      throw error;
     }
   }
 

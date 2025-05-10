@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="500" height="160" viewBox="0 0 500 160">
+  <!-- Expanded background with safe padding -->
+  <rect width="500" height="160" fill="#fafafa" rx="12" stroke="#eee" stroke-width="1"/>
+  
+  <!-- Gradient from #555555 to #e1e1e1 -->
+  <linearGradient id="newsGradient" x1="0%" y1="50%" x2="100%" y2="50%">
+    <stop offset="0%" stop-color="#555555"/>
+    <stop offset="100%" stop-color="#a5a5a5"/>
+  </linearGradient>
+  
+  <!-- Main title with safe margins -->
+  <text x="250" y="100" 
+        font-family="'Georgia', serif" 
+        font-size="60" 
+        font-weight="700" 
+        letter-spacing="1.8px"
+        text-anchor="middle" 
+        fill="url(#newsGradient)">
+    NEWS PORTAL
+  </text>
+</svg>

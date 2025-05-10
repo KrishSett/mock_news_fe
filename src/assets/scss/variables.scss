@@ -1,46 +1,30 @@
-// _variables.scss
-
 // Colors
-$primary: #78c36e; // A standard, accessible blue (UPDATE THIS)
-$secondary: #6c757d; // A neutral gray
-$accent-color: #e74c3c;   // A distinct color for emphasis (ADDED THIS)
-$light: #f8f9fa;     // Very light background
-$dark: #212529;      // Very dark text/background
-$text-primary: #333; // Primary text color
-$text-secondary: #666; // Secondary/lighter text color
-$heading-color: darken($secondary, 10%); // Darker shade of secondary for headings
+$primary: #f8f9fa; // Whitish primary color
+$secondary: #6c757d; // Neutral gray
+$accent-color: #78c36e; // Green accent (from original primary)
+$light: #ffffff; // Pure white
+$dark: #212529; // Very dark text
+$text-primary: #333333; // Light black for primary text
+$text-secondary: #666666; // Slightly lighter text
+$heading-color: #222222; // Darker for headings
 $primary-dark: darken($primary, 15%);
 $primary-light: lighten($primary, 15%);
-$secondary-dark: darken($secondary, 10%);
-$light-secondary: #dee2e6; // Slightly darker light color
-$accent-dark: darken($accent-color, 10%);
 
 // Transparent Colors
-$primary-transparent: rgba(red($primary), green($primary), blue($primary), 0.1);
-$primary-transparent-light: rgba(red($primary), green($primary), blue($primary), 0.05); // Even lighter
+$primary-transparent: rgba(248, 249, 250, 0.1);
+$primary-transparent-light: rgba(248, 249, 250, 0.05);
 
 // Border Radius
-$border-radius: 0.5rem;       // Slightly more modern default
-$border-radius-sm: 0.25rem;    // Smaller for subtle rounding
+$border-radius: 0.5rem;
+$border-radius-sm: 0.25rem;
 
-// Shadows
-$box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-$box-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.15);
-$box-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.15);
-$box-shadow-inset-bottom: inset 0 -2px 3px rgba(0, 0, 0, 0.05); // Softer inset
-$box-shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.05); // Very subtle shadow
+// Shadows (Simplified)
+$box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+$box-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+$box-shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.1);
 
-// Container Max Width (for responsiveness)
+// Container
 $container-width: 1200px;
 
-// Font sizes and spacing
-$font-size-base: 1rem;
-$font-size-lg: 1.25rem; // Slightly smaller large font
-$font-size-xl: 1.5rem; // Smaller extra-large font
-$line-height-base: 1.6;
-
-// Breakpoints for responsive design
-$breakpoint-sm: 576px;
+// Breakpoints
 $breakpoint-md: 768px;
-$breakpoint-lg: 992px;
-$breakpoint-xl: 1200px;
