@@ -131,26 +131,42 @@ class AuthService extends ApiService {
     try {
       const USER_TOKEN_KEY = "X-AUTH-TYPE";
       let hashToken = window.localStorage.getItem(USER_TOKEN_KEY);
-      if (hashToken) {
+      if (!hashToken || !(await this.isTokenValid(hashToken))) {
+        const visitorId = await this.userFingerPrint();
+        hashToken = await this.post(
+          "guest/hash",
+          {
+            visitorId: visitorId,
+          },
+          {
+            authorization: `Bearer ${authorization}`,
+          }
+        );
+
+        window.localStorage.setItem(USER_TOKEN_KEY, hashToken?._tkn);
         return hashToken;
       }
 
-      const visitorId = await this.userFingerPrint();
-      hashToken = await this.post(
-        "guest/hash",
-        {
-          visitorId: visitorId,
-        },
-        {
-          authorization: `Bearer ${authorization}`,
-        }
-      );
-
-      window.localStorage.setItem(USER_TOKEN_KEY, hashToken?._tkn);
       return hashToken;
     } catch (error) {
       console.log(error);
       throw error;
+    }
+  }
+
+  isTokenValid(encodedToken) {
+    try {
+      const decodedToken = atob(encodedToken);
+      const parts = decodedToken.split(";");
+      if (parts.length !== 2) return false;
+
+      const jsonData = atob(parts[0]);
+      const data = JSON.parse(jsonData);
+
+      return Number(data?.time) > Date.now();
+    } catch {
+      console.error("Token expired");
+      return false;
     }
   }
 }
