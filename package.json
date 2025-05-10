@@ -9,6 +9,7 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@fingerprintjs/fingerprintjs": "^4.6.2",
     "@tailwindcss/postcss": "^4.1.4",
     "@vueuse/core": "^13.1.0",
     "axios": "^1.9.0",

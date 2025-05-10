@@ -85,35 +85,42 @@ img {
 /* Header */
 .header {
     background-color: $primary;
-    padding: 1rem 0;
+    padding: 1.5rem 0;
     border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    text-align: center;
     
     &__container {
         display: flex;
-        justify-content: flex-start; /* Changed from space-between */
+        justify-content: center;
         align-items: center;
         max-width: $container-width;
-        /*margin: 0 auto;*/
-        padding: 0 1.5rem;
-        gap: 2rem; /* Provides spacing if other elements are added */
+        margin: 0 auto;
+        padding: 0 2rem;
     }
 
     &__title {
-        height: 2.5rem;
-        /* Removed margin-right: auto since we're using flex-start */
+        height: 3.5rem;
         
         img {
-            height: 125%;
+            height: 140%;
             width: auto;
-            max-width: 200px;
+            max-width: 280px;
             object-fit: contain;
+            display: block;
+        }
+
+        &__date {
+            font-size: 13px;
+            color: #696969
         }
     }
 
     @media (min-width: $breakpoint-md) {
+        padding: 2rem 0;
+        
         &__title {
-            height: 3rem;
-            max-width: 240px;
+            height: 4rem;
+            max-width: 320px;
         }
     }
 }

@@ -3,22 +3,14 @@
     <div class="header__container">
       <h1 class="header__title">
         <img src="@/assets/news_portal_logo.svg" alt="news-portal" />
+        <p class="header__title__date">{{ todaysDate }}</p>
       </h1>
     </div>
   </header>
 </template>
 
 <script setup>
-import { onUpdated } from "vue";
+import { computed } from "vue";
 
-const props = defineProps({
-  authToken: {
-    type: String,
-    required: true,
-  },
-});
-
-onUpdated(() => {
-  console.log("TOKEN (onUpdated):", props.authToken);
-});
+const todaysDate = computed(() => new Date().toDateString());
 </script>
