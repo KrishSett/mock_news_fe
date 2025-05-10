@@ -10,7 +10,7 @@ class ApiService {
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
-        ...defaultHeaders, // Default custom headers (optional)
+        ...defaultHeaders,
       },
     });
   }
@@ -45,5 +45,24 @@ class ApiService {
     }
   }
 }
+const getUserIdFromStorage = () => {
+  try {
+    return window.localStorage.getItem("X-USER-ID") || null;
+  } catch (error) {
+    console.warn("LocalStorage access failed:", error);
+    return null;
+  }
+};
+
+const getAuthTypeFromStorage = () => {
+  try {
+    return window.localStorage.getItem("X-AUTH-TYPE") || null;
+  } catch (error) {
+    console.warn("LocalStorage access failed:", error);
+    return null;
+  }
+};
+
+export { getAuthTypeFromStorage, getUserIdFromStorage };
 
 export default ApiService;

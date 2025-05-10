@@ -1,3 +1,4 @@
+import FingerprintJS from "@fingerprintjs/fingerprintjs";
 import ApiService from "./api.service";
 
 class AuthService extends ApiService {
@@ -102,6 +103,53 @@ class AuthService extends ApiService {
       return jsonData.token;
     } catch (error) {
       console.error("Decryption error:", error);
+      throw error;
+    }
+  }
+
+  async userFingerPrint() {
+    try {
+      const HASH_KEY = "X-USER-ID";
+      const fingerPrint = window.localStorage.getItem(HASH_KEY);
+
+      if (fingerPrint) {
+        return fingerPrint;
+      }
+
+      const fp = await FingerprintJS.load();
+      const { visitorId } = await fp.get();
+
+      window.localStorage.setItem(HASH_KEY, visitorId);
+      return visitorId;
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  }
+
+  async getHashToken(authorization) {
+    try {
+      const USER_TOKEN_KEY = "X-AUTH-TYPE";
+      let hashToken = window.localStorage.getItem(USER_TOKEN_KEY);
+      if (hashToken) {
+        return hashToken;
+      }
+
+      const visitorId = await this.userFingerPrint();
+      hashToken = await this.post(
+        "guest/hash",
+        {
+          visitorId: visitorId,
+        },
+        {
+          authorization: `Bearer ${authorization}`,
+        }
+      );
+
+      window.localStorage.setItem(USER_TOKEN_KEY, hashToken?._tkn);
+      return hashToken;
+    } catch (error) {
+      console.log(error);
       throw error;
     }
   }
