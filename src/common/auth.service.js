@@ -1,5 +1,7 @@
+/* eslint-disable prettier/prettier */
 import FingerprintJS from "@fingerprintjs/fingerprintjs";
 import ApiService from "./api.service";
+import AuthStorage from "../store/auth.storage";
 
 class AuthService extends ApiService {
   constructor() {
@@ -22,9 +24,7 @@ class AuthService extends ApiService {
         timestamp: timestamp,
       };
 
-      // JSON stringify the payload
       const jsonPayload = JSON.stringify(payload);
-
       // Base64 encode the string
       const combinedString = btoa(jsonPayload) + ";" + this.secretKey;
       return btoa(combinedString);
@@ -35,50 +35,51 @@ class AuthService extends ApiService {
   }
 
   async authenticate() {
-    const TOKEN_EXPIRY_MS = 24 * 60 * 60 * 1000; // 1 day
-    const STORAGE_KEY = "X-AUTH-TOKEN";
-    const TIME_KEY = "X-AUTH-TIMESTAMP";
+    const DEFAULT_EXPIRY_MS = 24 * 60 * 60 * 1000; // 1 day (fallback)
 
     try {
-      let authToken = window.localStorage.getItem(STORAGE_KEY);
-      let authTime = window.localStorage.getItem(TIME_KEY);
-      const currentTime = Date.now();
-      const tokenAge = currentTime - parseInt(authTime || 0);
+      // Read and decrypt stored token
+      const storedTime = Number(AuthStorage.authTime) || 0;
+      const storedToken = AuthStorage.authToken
+        ? this.decryptAuthToken(AuthStorage.authToken)
+        : null;
 
-      // Validate existing token
-      if (!authToken || !authTime || tokenAge > TOKEN_EXPIRY_MS) {
+      // Validate token freshness
+      const isTokenValid =
+        storedToken &&
+        storedTime &&
+        Date.now() - storedTime < DEFAULT_EXPIRY_MS;
+
+      if (!isTokenValid) {
         const authHash = this.generateEncryptedPayload();
-        const response = await this.post(
-          "/auth/login",
-          {
-            token: authHash,
-          },
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
+        const response = await this.post("/auth/login", {
+          token: authHash,
+        });
 
-        if (!response?.success || !response.token || !response.time) {
-          throw new Error(`Invalid auth response - ${response.message}`);
+        if (!response?.token) {
+          throw new Error("Missing token in auth response");
         }
 
-        // Store new token
-        authToken = response.token;
-        authTime = response.time;
-        const encToken = this.encryptAuthToken(authToken, authTime);
+        if (!response?.time) {
+          throw new Error("Missing timestamp in auth response");
+        }
 
-        window.localStorage.setItem(STORAGE_KEY, encToken);
-        window.localStorage.setItem(TIME_KEY, authTime);
+        // Encrypt and store new token
+        AuthStorage.authToken = this.encryptAuthToken(
+          response.token,
+          response.time
+        );
+        AuthStorage.authTime = response.time;
+
+        return response.token;
       }
 
-      return true;
+      return storedToken;
     } catch (error) {
-      console.error("Authentication failed:", error?.message);
-      window.localStorage.removeItem(STORAGE_KEY);
-      window.localStorage.removeItem(TIME_KEY);
-      throw error;
+      console.error("Authentication failed:", error.message);
+      AuthStorage.authToken = null; // Clear invalid token
+      AuthStorage.authTime = null;
+      throw error; // Re-throw for caller to handle
     }
   }
 
@@ -109,8 +110,7 @@ class AuthService extends ApiService {
 
   async userFingerPrint() {
     try {
-      const HASH_KEY = "X-USER-ID";
-      const fingerPrint = window.localStorage.getItem(HASH_KEY);
+      const fingerPrint = AuthStorage.userId;
 
       if (fingerPrint) {
         return fingerPrint;
@@ -118,39 +118,55 @@ class AuthService extends ApiService {
 
       const fp = await FingerprintJS.load();
       const { visitorId } = await fp.get();
+      AuthStorage.userId = visitorId;
 
-      window.localStorage.setItem(HASH_KEY, visitorId);
       return visitorId;
     } catch (error) {
-      console.log(error);
+      console.log("Error while retrieving browser data", error);
       throw error;
     }
   }
 
   async getHashToken(authorization) {
     try {
-      const USER_TOKEN_KEY = "X-AUTH-TYPE";
-      let hashToken = window.localStorage.getItem(USER_TOKEN_KEY);
-      if (!hashToken || !(await this.isTokenValid(hashToken))) {
-        const visitorId = await this.userFingerPrint();
-        hashToken = await this.post(
-          "guest/hash",
-          {
-            visitorId: visitorId,
-          },
-          {
-            authorization: `Bearer ${authorization}`,
-          }
-        );
+      const fpId = await this.userFingerPrint();
+      const existingToken = AuthStorage.authType;
 
-        window.localStorage.setItem(USER_TOKEN_KEY, hashToken?._tkn);
-        return hashToken;
+      // Validate and check token
+      if (existingToken && await this.isTokenValid(existingToken)) {
+        return {
+          authTypeValue: existingToken,
+          fingerprint: fpId
+        };
       }
 
-      return hashToken;
+      // Generate new token
+      const response = await this.post(
+        "guest/hash",
+        {
+          visitorId: fpId
+        },
+        {
+          authorization: `Bearer ${authorization}`,
+        }
+      );
+
+      if (!response?._tkn) {
+        throw new Error('Invalid token response from server');
+      }
+
+      const authTypeValue = response._tkn;
+      AuthStorage.authType = authTypeValue;
+
+      return {
+        authTypeValue: authTypeValue,
+        fingerprint: fpId
+      };
+
     } catch (error) {
-      console.log(error);
-      throw error;
+      console.error('Failed to get hash token:', error);
+      AuthStorage.authType = null;
+      throw new Error('Authentication failed. Please try again.');
     }
   }
 
@@ -171,4 +187,4 @@ class AuthService extends ApiService {
   }
 }
 
-export default AuthService;
+export const authService = new AuthService();

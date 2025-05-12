@@ -1,49 +1,69 @@
 <template>
   <nav class="navbar">
     <ul class="navbar__list list-horizontal">
-      <li v-for="(item, index) in navItems" :key="index">
-        {{ item }}
+      <li v-for="(item, key) in navItems" :key="key" class="navbar__item"
+        :class="{ 'has-dropdown': item.subcategories && item.subcategories.length }">
+        <a :href="item.href || '#'" class="navbar__link">
+          {{ item.title }}
+          <span v-if="item.subcategories && item.subcategories.length" class="dropdown-indicator"></span>
+        </a>
+        <ul v-if="item.subcategories && item.subcategories.length" class="navbar__dropdown">
+          <li v-for="(subitem, subkey) in item.subcategories" :key="subkey" class="navbar__dropdown-item">
+            <a :href="subitem.href" class="navbar__dropdown-link">
+              {{ subitem.title }}
+            </a>
+          </li>
+        </ul>
       </li>
     </ul>
   </nav>
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
-import ApiService, {
-  getUserIdFromStorage,
-  getAuthTypeFromStorage,
-} from "../common/api.service";
+import { ref, inject, watchEffect } from "vue";
+import { contentService } from "../common/content.service";
 
-const props = defineProps({
-  authToken: {
-    type: String,
-    required: true,
-  },
-});
-
-const emits = defineEmits(["nav-completed"]);
+const auth = {
+  "authorization": inject("authorization"),
+  "authType": inject("authType"),
+  "visitorId": inject("visitorId")
+};
 
 const navItems = ref([]);
+const isLoaded = ref(false);
+const error = ref(null);
 
-const fetchNavItems = async () => {
+const loadNavItems = async () => {
   try {
-    const authorization = props.authToken;
-    const apiService = new ApiService({
-      authorization: `Bearer ${authorization}`,
-      "X-AUTH-TYPE": getAuthTypeFromStorage(),
-      "X-USER-ID": getUserIdFromStorage(),
+    error.value = null;
+    isLoaded.value = false;
+    
+    if (!auth.authorization?.value || !auth.authType?.value || !auth.visitorId?.value) {
+      navItems.value = [];
+      return;
+    }
+
+    const response = await contentService.getNavbarItems({
+      "Authorization": `Bearer ${auth.authorization.value}`,
+      "X-AUTH-TYPE": auth.authType.value,
+      "X-USER-ID": auth.visitorId.value
     });
 
-    const response = await apiService.get("feed/categories");
-    navItems.value = response;
-  } catch (error) {
-    console.error("Failed to fetch navigation items:", error);
+    console.log("Nav items loaded:", response);
+    navItems.value = response || [];
+  } catch (err) {
+    console.error("Failed to load nav items:", err);
+    error.value = err;
+    navItems.value = [];
   } finally {
-    console.log("DONE RESPONSE");
-    emits("nav-completed", true);
+    isLoaded.value = true;
   }
 };
 
-onMounted(fetchNavItems);
+// React to auth changes
+watchEffect(() => {
+  if (auth.authorization?.value && auth.authType?.value && auth.visitorId?.value) {
+    loadNavItems();
+  }
+});
 </script>

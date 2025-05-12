@@ -1,73 +1,35 @@
 <template>
   <AppHeader />
-  <AppNavbar
-    v-if="isAuthenticated && authToken"
-    :auth-token="authToken"
-    @nav-completed="handleLoader"
-  />
+  <AppNavbar v-if="isAuthenticated" />
   <AppFooter />
   <Loading v-model:active="isLoading" />
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from "vue";
+import { ref, onMounted, watch, provide } from "vue";
 import AppHeader from "@/components/AppHeader.vue";
 import AppNavbar from "@/components/AppNavbar.vue";
 import AppFooter from "@/components/AppFooter.vue";
-import AuthService from "./common/auth.service";
-import { useLoading } from "vue-loading-overlay";
+import { useAuth } from "./store/apiAuth.storage";
 import "vue-loading-overlay/dist/css/index.css";
 
-// State
-const authToken = ref(null);
-const isAuthenticated = ref(false);
-const isLoading = ref(true);
-
-// Loader
-const $loading = useLoading();
-const loader = $loading.show({ fullPage: true, loader: "dots" });
-
-// Auth service
-const authService = new AuthService();
-
 // Authentication logic
-const authenticate = async () => {
-  try {
-    const authResult = await authService.authenticate();
-    if (!authResult) throw new Error("Authentication failed");
-
-    const encToken = window.localStorage.getItem("X-AUTH-TOKEN");
-    if (!encToken) throw new Error("No token found");
-
-    authToken.value = authService.decryptAuthToken(encToken);
-    isAuthenticated.value = true;
-    await authService.getHashToken(authToken.value);
-
-    return true;
-  } catch (error) {
-    console.error("Auth failed:", error);
-    isAuthenticated.value = false;
-    authToken.value = null;
-    return false;
-  }
-};
-
-const handleLoader = (data) => {
-  console.log("NAV COMPLETE", data);
-  loader.hide();
-  isLoading.value = false;
-};
-
+const { isAuthenticated, isLoading, authorization, authType, visitorId, authenticate } = useAuth();
 // Lifecycle
-onMounted(authenticate);
+  onMounted(async () => {
+    try {
+      await authenticate();
+      console.log("Authenticated:", isAuthenticated.value); // true
+    } catch {
+      console.log("Not authenticated"); // false
+    }
+  });
 
-// Optional: Watch for token changes
-watch(authToken, (newVal) => {
-  if (newVal) {
-    console.debug("Auth token updated");
-  }
-});
+  provide("authorization", authorization);
+  provide("authType", authType);
+  provide("visitorId", visitorId);
 </script>
+
 <style lang="scss">
 @import "@/assets/scss/styles.scss";
 </style>
