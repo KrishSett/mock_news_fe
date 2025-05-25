@@ -26,10 +26,13 @@
 </template>
 
 <script setup>
-import { computed } from "vue";
+import { ref, computed } from "vue";
+import { contentService } from "../common/content.service";
 
 const footerTitle = `${process.env.VUE_APP_TITLE} ${process.env.VUE_APP_SUBTITLE}`;
 const currentYear = computed(() => {
   return new Date().getFullYear();
 });
+
+
 </script>

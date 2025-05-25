@@ -20,13 +20,16 @@
 </template>
 
 <script setup>
-import { ref, inject, watchEffect } from "vue";
+import { ref, watchEffect } from "vue";
+import useAuthStore from "../states/auth.states";
 import { contentService } from "../common/content.service";
 
+const authStore = useAuthStore();
+
 const auth = {
-  "authorization": inject("authorization"),
-  "authType": inject("authType"),
-  "visitorId": inject("visitorId")
+  authorization: authStore.getAuthorization,
+  authType: authStore.getAuthType,
+  visitorId: authStore.getVisitorId
 };
 
 const navItems = ref([]);
@@ -37,8 +40,9 @@ const loadNavItems = async () => {
   try {
     error.value = null;
     isLoaded.value = false;
-    
+
     if (!auth.authorization?.value || !auth.authType?.value || !auth.visitorId?.value) {
+      console.error("No auth");
       navItems.value = [];
       return;
     }
@@ -49,7 +53,6 @@ const loadNavItems = async () => {
       "X-USER-ID": auth.visitorId.value
     });
 
-    console.log("Nav items loaded:", response);
     navItems.value = response || [];
   } catch (err) {
     console.error("Failed to load nav items:", err);
@@ -66,4 +69,5 @@ watchEffect(() => {
     loadNavItems();
   }
 });
+
 </script>

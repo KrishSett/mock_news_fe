@@ -17,6 +17,16 @@ class ApiService {
     });
   }
 
+  preValidateRequestedData(endPoint = '', headers = {}) {
+    if (typeof endPoint !== 'string' || !endPoint.trim()) {
+        throw new Error('Invalid endpoint');
+    }
+
+    if (typeof headers !== 'object' || headers === null || Array.isArray(headers)) {
+        throw new Error('Headers must be a non-null, non-array object');
+    }
+  }
+
   // Set or update headers globally
   setHeaders(headers) {
       if (headers && typeof headers === 'object' && !Array.isArray(headers)) {

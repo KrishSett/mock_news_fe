@@ -1,7 +1,6 @@
 import { ref } from 'vue';
 import { authService } from '../common/auth.service';
 
-const isAuthenticated = ref(false);
 const isLoading = ref(false);
 const authorization = ref(null);
 const authType = ref(null);
@@ -26,14 +25,12 @@ export const useAuth = () => {
       authorization.value = authToken;
       authType.value = authTypeValue;
       visitorId.value = fingerprint;
-      isAuthenticated.value = true;
     } catch (error) {
       console.error("Auth error:", error);
-      isAuthenticated.value = false;
     } finally {
       isLoading.value = false;
     }
   };
 
-  return { isAuthenticated, isLoading, authorization, authType, visitorId, authenticate };
+  return { isLoading, authorization, authType, visitorId, authenticate };
 };

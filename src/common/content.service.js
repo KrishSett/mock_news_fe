@@ -9,17 +9,11 @@ class ContentService extends ApiService {
   // Navbar API call
   async getNavbarItems(headers = {}) {
       try {
-          if (typeof headers !== 'object' || headers === null || Array.isArray(headers)) {
-              throw new Error('Headers must be a non-null, non-array object');
-          }
-
-          if (typeof API_ROUTES.NAVBAR !== 'string' || !API_ROUTES.NAVBAR.trim()) {
-              throw new Error('Invalid NAVBAR route configuration');
-          }
-
-          this.setHeaders(headers);
-          const response = await this.get(API_ROUTES.NAVBAR);
-          return response;
+        const endpoint = API_ROUTES.NAVBAR;
+        this.preValidateRequestedData(endpoint, headers)
+        this.setHeaders(headers);
+        const response = await this.get(endpoint);
+        return response;
       } catch (error) {
           console.error('[NavbarService] Failed to fetch navbar items:', error);
           throw error;
@@ -27,13 +21,16 @@ class ContentService extends ApiService {
   }
 
   // Footer API call
-  async getFooterContent() {
+  async getFooterPages() {
     try {
-      const endpoint = this.getEndPoint("footer");
-      return this.get(endpoint);
+      const endpoint = API_ROUTES.FOOTER;
+      this.preValidateRequestedData(endpoint, headers)
+      this.setHeaders(headers);
+      const response = await this.get(endpoint);
+      return response;
     } catch (error) {
-      console.log("[getFooterContent] Error", error);
-      return null;
+      console.error("[getFooterPages] Error", error);
+      throw error;
     }
   }
 }
