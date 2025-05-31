@@ -21,7 +21,7 @@ class ContentService extends ApiService {
   }
 
   // Footer API call
-  async getFooterPages() {
+  async getFooterPages(headers = {}) {
     try {
       const endpoint = API_ROUTES.FOOTER;
       this.preValidateRequestedData(endpoint, headers)

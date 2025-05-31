@@ -1,7 +1,7 @@
 <template>
   <AppHeader />
   <AppNavbar v-if="authComplete" />
-  <AppFooter />
+  <AppFooter v-if="authComplete" />
   <Teleport to="#page_loader">
     <Loading v-model:active="isLoading" />
   </Teleport>
