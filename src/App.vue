@@ -13,10 +13,10 @@ import AppHeader from "@/components/AppHeader.vue";
 import AppNavbar from "@/components/AppNavbar.vue";
 import AppFooter from "@/components/AppFooter.vue";
 import { useAuth } from "./store/apiAuth.storage";
-import useAuthStore from "./states/auth.states";
+import { useAuthStore } from "./states/auth.states";
 import "vue-loading-overlay/dist/css/index.css";
 // Authentication logic
-const {  isLoading, authorization, authType, visitorId, authenticate } = useAuth();
+const { isLoading, authorization, authType, visitorId, authenticate } = useAuth();
 
 // State load
 const authStore = useAuthStore();
@@ -30,10 +30,10 @@ onMounted(async () => {
     authStore.setAuth({
       authorization: authorization,
       authType: authType,
-      visitorId: visitorId
+      visitorId: visitorId,
     });
 
-    authComplete.value = true
+    authComplete.value = true;
   } catch (error) {
     console.log("Not authenticated", error); // false
   }
