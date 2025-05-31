@@ -16,6 +16,7 @@
     "core-js": "^3.8.3",
     "crypto-js": "^4.2.0",
     "pinia": "^3.0.2",
+    "pinia-plugin-persistedstate": "^4.3.0",
     "vue": "^3.2.13",
     "vue-final-modal": "^4.5.5",
     "vue-loading-overlay": "^6.0.6",

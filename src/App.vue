@@ -1,7 +1,16 @@
 <template>
   <AppHeader />
   <AppNavbar v-if="authComplete" />
+  
+  <!-- Dynamic routes will render here -->
+  <router-view v-slot="{ Component }">
+    <transition name="fade" mode="out-in">
+      <component :is="Component" />
+    </transition>
+  </router-view>
+  
   <AppFooter v-if="authComplete" />
+  
   <Teleport to="#page_loader">
     <Loading v-model:active="isLoading" />
   </Teleport>
