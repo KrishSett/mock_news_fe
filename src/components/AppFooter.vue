@@ -2,7 +2,7 @@
   <footer class="footer" v-show="isLoaded">
     <div class="footer__copyright">
       <span class="footer__subtitle">
-        &copy; {{ currentYear }} - {{ footerTitle }}
+        &copy; {{ footerTitle }}
       </span>
       <p>Your news portal description or tagline can go here</p>
     </div>
@@ -32,25 +32,24 @@ import { contentService } from "../common/content.service";
 
 const footerItems = ref([]);
 const isLoaded = ref(false);
-const footerTitle = `${process.env.VUE_APP_TITLE} ${process.env.VUE_APP_SUBTITLE}`;
-const currentYear = computed(() => {
-  return new Date().getFullYear();
+const footerTitle = computed(() => {
+  return `${new Date().getFullYear()} - ${process.env.VUE_APP_TITLE} ${process.env.VUE_APP_SUBTITLE}`;
 });
 
 const authStore = useAuthStore();
-const authComplete = authStore.getIsAuthenticated;
+const auth = authStore.getAuthState;
+const authorization = authStore.authorization;
 
 // Load Navbar items
 async function fetchFooterItems() {
-  if (!authComplete) {
-    throw new Error("Authentication not complete");
+  if (!auth.isAuthenticated) {
+    throw new Error("Authentication not completed");
   }
 
-  const auth = authStore.getAuth;
   return await contentService.getFooterPages({
-    "Authorization": `Bearer ${auth.authorization.value}`,
-    "X-AUTH-TYPE": auth.authType.value,
-    "X-USER-ID": auth.visitorId.value
+    "Authorization": `Bearer ${authorization}`,
+    "X-AUTH-TYPE": auth.authType,
+    "X-USER-ID": auth.visitorId
   });
 }
 

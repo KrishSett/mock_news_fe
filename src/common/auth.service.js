@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import FingerprintJS from "@fingerprintjs/fingerprintjs";
 import ApiService from "./api.service";
-import AuthStorage from "../store/auth.storage";
+import { useAuthStore } from "../states/auth.states"; // Import Pinia store
 
 class AuthService extends ApiService {
   constructor() {
@@ -13,6 +13,15 @@ class AuthService extends ApiService {
     if (!this.secretKey) {
       throw new Error("Encryption secret key is missing");
     }
+
+    this._authStore = null;
+  }
+
+  get authStore() {
+    if (!this._authStore) {
+      this._authStore = useAuthStore();
+    }
+    return this._authStore;
   }
 
   generateEncryptedPayload() {
@@ -38,10 +47,10 @@ class AuthService extends ApiService {
     const DEFAULT_EXPIRY_MS = 24 * 60 * 60 * 1000; // 1 day (fallback)
 
     try {
-      // Read and decrypt stored token
-      const storedTime = Number(AuthStorage.authTime) || 0;
-      const storedToken = AuthStorage.authToken
-        ? this.decryptAuthToken(AuthStorage.authToken)
+      // Read from Pinia store instead of AuthStorage
+      const storedTime = Number(this.authStore.authTime) || 0;
+      const storedToken = this.authStore.authToken
+        ? this.decryptAuthToken(this.authStore.authToken)
         : null;
 
       // Validate token freshness
@@ -64,12 +73,11 @@ class AuthService extends ApiService {
           throw new Error("Missing timestamp in auth response");
         }
 
-        // Encrypt and store new token
-        AuthStorage.authToken = this.encryptAuthToken(
-          response.token,
+        // Store in Pinia
+        this.authStore.setAuthToken(
+          this.encryptAuthToken(response.token, response.time),
           response.time
         );
-        AuthStorage.authTime = response.time;
 
         return response.token;
       }
@@ -77,9 +85,10 @@ class AuthService extends ApiService {
       return storedToken;
     } catch (error) {
       console.error("Authentication failed:", error.message);
-      AuthStorage.authToken = null; // Clear invalid token
-      AuthStorage.authTime = null;
-      throw error; // Re-throw for caller to handle
+      // Clear via Pinia
+      this.authStore.authToken = null;
+      this.authStore.authTime = null;
+      throw error;
     }
   }
 
@@ -110,7 +119,8 @@ class AuthService extends ApiService {
 
   async userFingerPrint() {
     try {
-      const fingerPrint = AuthStorage.userId;
+      // Get from Pinia store
+      const fingerPrint = this.authStore.visitorId;
 
       if (fingerPrint) {
         return fingerPrint;
@@ -118,7 +128,8 @@ class AuthService extends ApiService {
 
       const fp = await FingerprintJS.load();
       const { visitorId } = await fp.get();
-      AuthStorage.userId = visitorId;
+      // Store in Pinia
+      this.authStore.setVisitorId(visitorId);
 
       return visitorId;
     } catch (error) {
@@ -130,7 +141,8 @@ class AuthService extends ApiService {
   async getHashToken(authorization) {
     try {
       const fpId = await this.userFingerPrint();
-      const existingToken = AuthStorage.authType;
+      // Get from Pinia
+      const existingToken = this.authStore.authType;
 
       // Validate and check token
       if (existingToken && await this.isTokenValid(existingToken)) {
@@ -156,7 +168,8 @@ class AuthService extends ApiService {
       }
 
       const authTypeValue = response._tkn;
-      AuthStorage.authType = authTypeValue;
+      // Store in Pinia
+      this.authStore.setAuthType(authTypeValue);
 
       return {
         authTypeValue: authTypeValue,
@@ -165,7 +178,7 @@ class AuthService extends ApiService {
 
     } catch (error) {
       console.error('Failed to get hash token:', error);
-      AuthStorage.authType = null;
+      this.authStore.authType = null;
       throw new Error('Authentication failed. Please try again.');
     }
   }

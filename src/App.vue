@@ -1,16 +1,16 @@
 <template>
   <AppHeader />
   <AppNavbar v-if="authComplete" />
-  
+
   <!-- Dynamic routes will render here -->
   <router-view v-slot="{ Component }">
     <transition name="fade" mode="out-in">
       <component :is="Component" />
     </transition>
   </router-view>
-  
+
   <AppFooter v-if="authComplete" />
-  
+
   <Teleport to="#page_loader">
     <Loading v-model:active="isLoading" />
   </Teleport>
@@ -35,16 +35,13 @@ const authComplete = ref(false);
 onMounted(async () => {
   try {
     await authenticate();
-    console.log("Authenticated:", authorization, authType); // true
-    authStore.setAuth({
-      authorization: authorization,
-      authType: authType,
-      visitorId: visitorId,
-    });
+    console.log("Authenticated:", authorization, authType);
 
+    authStore.setAuthenticated();
     authComplete.value = true;
   } catch (error) {
-    console.log("Not authenticated", error); // false
+    authStore.clearAuth();
+    console.log("Not authenticated", error);
   }
 });
 </script>

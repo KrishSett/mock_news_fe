@@ -26,20 +26,23 @@ import { contentService } from "../common/content.service";
 
 const navItems = ref([]);
 const isLoaded = ref(false);
+
+
 const authStore = useAuthStore();
-const authComplete = authStore.getIsAuthenticated;
+const auth = authStore.getAuthState;
+const authorization = authStore.authorization;
+
 
 // Load Navbar items
 async function fetchNavbarItems() {
-  if (!authComplete) {
+  if (!auth.isAuthenticated) {
     throw new Error("Authentication not complete");
   }
 
-  const auth = authStore.getAuth;
   return await contentService.getNavbarItems({
-    "Authorization": `Bearer ${auth.authorization.value}`,
-    "X-AUTH-TYPE": auth.authType.value,
-    "X-USER-ID": auth.visitorId.value
+    "Authorization": `Bearer ${authorization}`,
+    "X-AUTH-TYPE": auth.authType,
+    "X-USER-ID": auth.visitorId
   });
 }
 
