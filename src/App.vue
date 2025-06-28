@@ -25,7 +25,7 @@ import { useAuth } from "./store/apiAuth.storage";
 import { useAuthStore } from "./states/auth.states";
 import "vue-loading-overlay/dist/css/index.css";
 // Authentication logic
-const { isLoading, authorization, authType, visitorId, authenticate } = useAuth();
+const { isLoading, authenticate } = useAuth();
 
 // State load
 const authStore = useAuthStore();
@@ -35,7 +35,6 @@ const authComplete = ref(false);
 onMounted(async () => {
   try {
     await authenticate();
-    console.log("Authenticated:", authorization, authType);
 
     authStore.setAuthenticated();
     authComplete.value = true;

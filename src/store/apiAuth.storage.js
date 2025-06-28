@@ -2,15 +2,15 @@ import { ref } from 'vue';
 import { authService } from '../common/auth.service';
 
 const isLoading = ref(false);
-const authorization = ref(null);
-const authType = ref(null);
-const visitorId = ref(null);
+
 
 export const useAuth = () => {
   const authenticate = async () => {
     try {
       isLoading.value = true;
       const authToken = await authService.authenticate();
+
+      // Auth-token not found
       if (!authToken) {
         console.log("Auth failed");
         throw new Error("Auth failed");
@@ -22,9 +22,7 @@ export const useAuth = () => {
         throw new Error("Hash failed");
       }
 
-      authorization.value = authToken;
-      authType.value = authTypeValue;
-      visitorId.value = fingerprint;
+      console.log("Authenticated", authToken);
     } catch (error) {
       console.error("Auth error:", error);
     } finally {
@@ -32,5 +30,5 @@ export const useAuth = () => {
     }
   };
 
-  return { isLoading, authorization, authType, visitorId, authenticate };
+  return { isLoading, authenticate };
 };

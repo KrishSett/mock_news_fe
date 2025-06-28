@@ -1,6 +1,7 @@
 /* eslint-disable prettier/prettier */
 import FingerprintJS from "@fingerprintjs/fingerprintjs";
 import ApiService from "./api.service";
+import { API_ROUTES } from "../utils/route.list";
 import { useAuthStore } from "../states/auth.states"; // Import Pinia store
 
 class AuthService extends ApiService {
@@ -61,7 +62,7 @@ class AuthService extends ApiService {
 
       if (!isTokenValid) {
         const authHash = this.generateEncryptedPayload();
-        const response = await this.post("/auth/login", {
+        const response = await this.post(API_ROUTES.LOGIN, {
           token: authHash,
         });
 
@@ -154,7 +155,7 @@ class AuthService extends ApiService {
 
       // Generate new token
       const response = await this.post(
-        "guest/hash",
+        API_ROUTES.HASH,
         {
           visitorId: fpId
         },
