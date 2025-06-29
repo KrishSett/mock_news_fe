@@ -2,11 +2,11 @@ import { useLoading } from 'vue-loading-overlay'
 
 class LoaderService {
   static config = {
-    color: '#444444',
+    color: '#777777',
     backgroundColor: '#e1e1e1',
     opacity: 0.9,
     spinner: 'dots',
-    fullPage: true,
+    fullPage: false,
     canCancel: false,
     lockScroll: true
   }
