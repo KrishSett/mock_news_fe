@@ -19,7 +19,7 @@ module.exports = {
   rules: {
     "no-undef": "off", // Turn off 'undefined' errors for certain properties
     "vue/script-setup-uses-vars": "error", // Enable variable tracking in Vue script setup
-    "endOfLine": "auto", // Ignore line endings
+    "endOfLine": 0, // Ignore line endings
   },
   overrides: [
     {
