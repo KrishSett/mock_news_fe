@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import HomeView from '../views/HomeView.vue';
 import PageView from '../views/PageView.vue';
+import NewsDetails from '../views/NewsDetails.vue';
 
 const routes = [
     {
@@ -12,6 +13,11 @@ const routes = [
       path: '/page/:slug',
       name: 'page',
       component: PageView
+  },
+  {
+    path: '/news/:uuid',
+    name: 'news.details',
+    component: NewsDetails
   }
 ];
 
