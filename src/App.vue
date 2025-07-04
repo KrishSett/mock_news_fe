@@ -1,19 +1,21 @@
 <template>
-  <AppHeader />
-  <template v-if="authComplete">
-    <AppNavbar />
-    <router-view v-slot="{ Component }">
-      <transition name="fade" mode="out-in">
-        <component :is="Component" />
-      </transition>
-    </router-view>
-    <AppFooter />
-  </template>
+  <div class="np-wrapper">
+    <AppHeader />
 
-  <template v-else>
-    <div class="full-screen-loader">Loading...</div>
-  </template>
+    <div v-if="authComplete">
+      <AppNavbar />
+      <router-view v-slot="{ Component }">
+        <transition name="fade" mode="out-in">
+          <component :is="Component" />
+        </transition>
+      </router-view>
+      <AppFooter />
+    </div>
+
+    <div v-else class="full-screen-loader" :style="{'text-align' : 'center'}">Loading...</div>
+  </div>
 </template>
+
 
 <script setup>
 import { onBeforeMount, ref } from "vue";
