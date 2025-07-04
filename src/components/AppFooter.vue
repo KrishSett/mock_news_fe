@@ -16,9 +16,9 @@
       >
         <!-- Loop through each link in the row -->
         <li v-for="link in linkGroup" :key="link.slug">
-          <a :href="link.url" class="footer__link">
+          <router-link :to="link.url" class="footer__link">
             {{ link.title }}
-          </a>
+          </router-link>
         </li>
       </ul>
     </div>

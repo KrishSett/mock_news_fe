@@ -1,17 +1,17 @@
 <template>
   <nav class="navbar" v-show="isLoaded">
     <ul class="navbar__list list-horizontal">
-      <li v-for="(item, key) in navItems" :key="key" class="navbar__item"
-        :class="{ 'has-dropdown': item.subcategories && item.subcategories.length }">
-        <a :href="item.href || '#'" class="navbar__link">
+      <li v-for="(item, key) in navItems" :key="key" class="navbar__item" :class="{ 'has-dropdown': item.subcategories && item.subcategories.length }">
+        <router-link :to="item.href || '#'" class="navbar__link">
           {{ item.title }}
           <span v-if="item.subcategories && item.subcategories.length" class="dropdown-indicator"></span>
-        </a>
+        </router-link>
+  
         <ul v-if="item.subcategories && item.subcategories.length" class="navbar__dropdown">
           <li v-for="(subitem, subkey) in item.subcategories" :key="subkey" class="navbar__dropdown-item">
-            <a :href="subitem.href" class="navbar__dropdown-link">
+            <router-link :to="subitem.href" class="navbar__dropdown-link">
               {{ subitem.title }}
-            </a>
+            </router-link>
           </li>
         </ul>
       </li>

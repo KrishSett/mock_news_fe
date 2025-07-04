@@ -1,9 +1,9 @@
 <template>
-    <a :href="`/news/${article.uuid}`">
+    <router-link :to="`/news/${article.uuid}`">
         <div class="news-card-wrapper">
             <div class="news-card-wrapper__image">
-                <img v-if="article.thumbnail" :src="newsImg" :alt="article.thumbnail.alt"
-                    :data-src="article.thumbnail.src" class="news-card-wrapper__img" ref="news-thumbnail"/>
+                <img v-if="article.thumbnail?.src" :src="imgSrc" :alt="article.thumbnail.alt || 'News image'"
+                    class="news-card-wrapper__img" :class="{ 'is-loaded': isImageLoaded }" @load="handleLoad" />
                 <img v-else src="/img/default-img.png" alt="Default image"
                     class="news-card-wrapper__img news-card-wrapper__img--placeholder" />
             </div>
@@ -12,35 +12,36 @@
                 <p class="news-card-wrapper__desc">{{ article.short_description }}</p>
             </div>
         </div>
-    </a>
+    </router-link>
 </template>
 
 <script setup>
-import { onMounted, useTemplateRef, ref, computed } from 'vue';
+import { ref, onMounted, defineProps } from 'vue';
+
 const props = defineProps({
     article: {
         type: Object,
         required: true,
         default: () => ({})
-    },
-    index: {
-        type: Number,
-        required: true,
-        default: 0
     }
 });
 
-const newsThumbnail = useTemplateRef('news-thumbnail');
-const newsImg = ref(props.article.thumbnail?.placeholder_image || '');
+const imgSrc = ref(props.article.thumbnail?.placeholder_image || '');
+const isImageLoaded = ref(false);
 
-onMounted (() => {
-    const realSrc = newsThumbnail.value.dataset?.src;
-    if (!realSrc) {
-        return;
+const handleLoad = () => {
+    isImageLoaded.value = true;
+}
+
+onMounted(() => {
+    if (props.article.thumbnail?.src) {
+        const fullImg = new Image();
+        fullImg.src = props.article.thumbnail.src;
+        fullImg.onload = () => {
+            imgSrc.value = props.article.thumbnail.src;
+        }
     }
-
-    newsImg.value = realSrc;
-});
+})
 </script>
 
 <style lang="scss" scoped>
@@ -60,10 +61,17 @@ onMounted (() => {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            transition: filter 0.4s ease;
+            filter: blur(8px);
+
+            &.is-loaded {
+                filter: blur(0);
+            }
 
             &--placeholder {
                 object-fit: contain;
                 background-color: #f0f0f0;
+                filter: none;
             }
         }
     }

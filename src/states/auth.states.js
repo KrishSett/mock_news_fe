@@ -40,6 +40,7 @@ export const useAuthStore = defineStore(STATE_KEYS.AUTH, () => {
 
   function setAuthenticated() {
     isAuthenticated.value = true;
+    console.log("AUTH SET");
   }
 
   function setVisitorId(id) {
