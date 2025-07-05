@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import HomeView from '../views/HomeView.vue';
 import PageView from '../views/PageView.vue';
 import NewsDetails from '../views/NewsDetails.vue';
+import NewsList from '../views/NewsList.vue';
 import NotFound from '../views/NotFound.vue';
 import { useNavStore } from '../states/nav.states';
 
@@ -34,6 +35,24 @@ const routes = [
     }
   },
   {
+    path: '/news/category/:slug',
+    name: 'news.category',
+    component: NewsList,
+    meta: {
+      title: 'News Category',
+      breadcrumb: 'Home / Category'
+    }
+  },
+  {
+    path: '/news/tag/:slug',
+    name: 'news.tag',
+    component: NewsList,
+    meta: {
+      title: 'News Tag',
+      breadcrumb: 'Home / Tag'
+    }
+  },
+  {
     path: '/:catchAll(.*)',
     name: 'not-found',
     component: NotFound,
@@ -48,14 +67,14 @@ const router = createRouter({
   routes
 });
 
-// Optional: Set page title
+// Set page title
 router.beforeEach((to, from, next) => {
   document.title = `${process.env.VUE_APP_TITLE} - ${to.meta.title || ''}`;
   next();
 });
 
+// Set page breadcrumb
 router.afterEach((to) => {
-  console.log("AFTER EACH");
   const navigation = useNavStore();
   navigation.setBreadcrumbs(to);
 });

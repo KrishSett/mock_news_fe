@@ -4,5 +4,6 @@ export const API_ROUTES = {
   "LOGIN": "auth/login",
   "HASH": "guest/hash",
   "HOME": "feed/home-page",
-  "NEWS_DETAILS": "feed/news/details"
+  "NEWS_DETAILS": "feed/news/details",
+  "PAGE_DETAILS": "feed/page"
 }

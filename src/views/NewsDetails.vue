@@ -30,7 +30,9 @@
         </div>
 
         <div v-else class="loading">Loading...</div>
-        <div v-if="errorMessage" class="err-msg">Error Opening The Requested Resource -  {{ errorMessage }}</div>
+        <div v-if="errorMessage">
+            <ErrorMessage :error="errorMessage"></ErrorMessage>
+        </div>
     </section>
 </template>
 
@@ -41,6 +43,7 @@ import { newsService } from '../common/news.service';
 import { useAuthStore } from '../states/auth.states';
 import NewsCard from '../components/NewsCard.vue';
 import BreadCrumb from '../components/BreadCrumb.vue';
+import ErrorMessage from '../components/ErrorMessage.vue';
 
 const route = useRoute();
 const uuid = route.params.uuid;
@@ -56,7 +59,6 @@ const imgSrc = ref(null);
 watch(() => news.value.thumbnail?.src, (src) => {
     if (src) imgSrc.value = src;
 });
-
 
 const fetchNewsDetails = async () => {
     if (!auth.isAuthenticated) {
@@ -199,14 +201,6 @@ onMounted(async () => {
             text-align: center;
             color: #666;
             padding: 2rem 0;
-        }
-
-        .err-msg {
-            text-align: center;
-            font-size: 1.2rem;
-            font-weight: 400;
-            color: #c0392b;
-            padding: 2rem;
         }
     }
 </style>
