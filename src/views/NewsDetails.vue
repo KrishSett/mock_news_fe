@@ -13,10 +13,21 @@
 
             <div class="tags" v-if="news.tags?.length">
                 <span class="tag" v-for="tag in news.tags" :key="tag.id">
-                    #{{ tag.slug }}
+                    <RouterLink :to="`/news/tag/${tag.slug}`">#{{ tag.slug }}</RouterLink>
                 </span>
             </div>
+
+            <!-- Related News Section -->
+            <div v-if="news.related_news?.length" class="related-news">
+                <h2 class="section-title">Related News</h2>
+                <div class="related-news-grid">
+                    <article class="news-card" v-for="(article, index) in news.related_news" :key="article.uuid">
+                        <NewsCard :article="article" :index="index"></NewsCard>
+                    </article>
+                </div>
+            </div>
         </div>
+
         <div v-else class="loading">Loading...</div>
     </section>
 </template>
@@ -26,6 +37,7 @@ import { onMounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { newsService } from '../common/news.service';
 import { useAuthStore } from '../states/auth.states';
+import NewsCard from '../components/NewsCard.vue';
 
 const route = useRoute()
 const uuid = route.params.uuid
@@ -97,6 +109,7 @@ onMounted(async () => {
     .description {
         font-size: 1.1rem;
         line-height: 1.7;
+        margin-top: 3rem;
         margin-bottom: 1.5rem;
     }
 
@@ -110,7 +123,12 @@ onMounted(async () => {
             padding: 0.3rem 0.6rem;
             font-size: 0.85rem;
             border-radius: 3px;
-            color: #333;
+        }
+        .tag:hover {
+            box-shadow: 2px 2px 2px #e1e1e1;
+        }
+        a {
+            color: #333 !important;
         }
     }
 
@@ -124,11 +142,59 @@ onMounted(async () => {
     .error {
         color: red;
     }
+
     .text-muted {
-        line-height: 1px;
+        line-height: 1.2;
         color: #666;
-        letter-spacing: 1px;
+        letter-spacing: 0.5px;
         margin-bottom: 20px;
+    }
+
+    .related-news {
+        margin-top: 3rem;
+        text-transform: uppercase;
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: #2c3e50;
+            position: relative;
+            display: inline-block;
+            padding-bottom: 0.5rem;
+
+            &::after {
+                content: "";
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                width: 60px;
+                height: 3px;
+                background: #e74c3c;
+            }
+        }
+
+        .related-news-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+
+            article.news-card {
+                flex: 1 1 calc(25% - 1.5rem);
+                max-width: calc(25% - 1.5rem);
+                box-sizing: border-box;
+
+                @media (max-width: 1024px) {
+                    flex: 1 1 calc(50% - 1rem);
+                    max-width: calc(50% - 1rem);
+                }
+
+                @media (max-width: 640px) {
+                    flex: 1 1 100%;
+                    max-width: 100%;
+                }
+            }
+        }
     }
 }
 </style>

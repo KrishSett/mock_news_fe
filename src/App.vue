@@ -6,7 +6,7 @@
       <AppNavbar />
       <router-view v-slot="{ Component }">
         <transition name="fade" mode="out-in">
-          <component :is="Component" />
+          <component :is="Component" :key="$route.fullPath" />
         </transition>
       </router-view>
       <AppFooter />
