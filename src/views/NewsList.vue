@@ -94,10 +94,6 @@ onMounted(async () => {
         isLoaded.value = true;
     }
 });
-
-watch(route.params.slug, async (newSlug) => {
-    console.log(newSlug);
-});
 </script>
 
 <style lang="scss" scoped>
