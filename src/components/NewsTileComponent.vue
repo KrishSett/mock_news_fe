@@ -70,15 +70,21 @@ const formattedDate = computed(() => {
         max-width: 300px;
         min-width: 200px;
         height: 100%;
+        max-height: 165px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f8f8f8;
 
         .news-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain; // ensures the image is centered without being cropped
             transition: opacity 0.3s ease;
             opacity: 1;
         }
     }
+
 
     .news-content {
         width: 60%;
