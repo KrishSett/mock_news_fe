@@ -1,16 +1,18 @@
 <template>
     <section class="page-details">
-        <div class="container">
-            <BreadCrumb />
-
-            <div class="container" v-if="isLoaded">
-                <h1 class="page-title">{{ page.title }}</h1>
-                <p class="description" v-html="page.description"></p>
-            </div>
-
-            <div v-else class="loading">Loading...</div>
-            <div v-if="errorMessage">
-                <ErrorMessage :error="errorMessage"></ErrorMessage>
+        <div v-if="errorMessage">
+            <ErrorMessage :error="errorMessage"></ErrorMessage>
+        </div>
+        <div v-else>
+            <div class="container">
+                <BreadCrumb />
+                <!-- Page Content -->
+                <div class="container" v-if="isLoaded">
+                    <h1 class="page-title">{{ page.title }}</h1>
+                    <p class="description" v-html="page.description"></p>
+                </div>
+                <!-- Loading -->
+                <div v-else class="loading">Loading...</div>
             </div>
         </div>
     </section>

@@ -1,7 +1,7 @@
 <template>
     <div v-if="isLoaded">
         <div class="home-page">
-            <div v-for="(articles, category) in apiData" :key="category">
+            <div v-for="(articles, category) in homeContents" :key="category">
                 <section :class="`${category}-news`">
                     <div class="container">
                         <h2 class="section-title">{{ String(category).toUpperCase() }}</h2>
@@ -23,7 +23,7 @@ import NewsCard from '../components/NewsCard.vue';
 import { useAuthStore } from '../states/auth.states';
 import { homeService } from '../common/home.service';
 
-const apiData = ref({});
+const homeContents = ref({});
 const isLoaded = ref(false);
 const authStore = useAuthStore();
 const auth = authStore.getAuthState;
@@ -44,10 +44,10 @@ const fetchNewsData = async () => {
 onMounted(async () => {
     try {
         const response = await fetchNewsData();
-        apiData.value = response;
+        homeContents.value = response;
     } catch (error) {
         console.error('Error', error);
-        apiData.value = {};
+        homeContents.value = {};
     } finally {
         isLoaded.value = true;
     }

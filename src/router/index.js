@@ -69,8 +69,13 @@ const router = createRouter({
 
 // Set page title
 router.beforeEach((to, from, next) => {
-  document.title = `${process.env.VUE_APP_TITLE} - ${to.meta.title || ''}`;
-  next();
+  try {
+    document.title = `${process.env.VUE_APP_TITLE} - ${to.meta.title || ''}`;
+    next();
+  } catch (err) {
+    console.error('Router error:', err);
+    next();
+  }
 });
 
 // Set page breadcrumb
